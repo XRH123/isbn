@@ -1,0 +1,32 @@
+@import '_varible.scss';
+.index {
+	.scan {
+		width: 300rpx;
+		height: 300rpx;
+		box-shadow: 0 0 20px 5px #ccc;
+		margin: 165rpx auto 0;
+		border-radius: 50%;
+		background: url(#{$scan}) center center no-repeat;
+		background-size: 128rpx 105rpx;
+	}
+	.or {
+		text-align: center;
+		margin: 80rpx auto;
+		text {
+			font-size: 28rpx;
+			color: #e6e6e6;
+		}
+	}
+	.search-input {
+		display: block;
+		width: 516rpx;
+		height: 86rpx;
+		border: 1rpx solid #ccc;
+		font-size: 28rpx;
+		padding: 0 30rpx;
+		box-sizing: border-box;
+		border: 1rpx solid #e6e6e6;
+		border-radius: 8rpx;
+		margin: 0 auto;
+	}
+}
