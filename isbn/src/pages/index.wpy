@@ -2,7 +2,7 @@
   <view class="index">
     <view class="scan" @tap="handleScan"></view>
     <view class="or"><text>或者</text></view>
-    <input type="text" class="search-input" placeholder="输入ISBN搜索" placeholder-style="color: #808080">
+    <input type="text" class="search-input" placeholder="输入ISBN搜索" placeholder-style="color: #808080" @confirm="handleInput"/>
   </view>
 </template>
 
@@ -22,8 +22,33 @@
       handleScan() {
         wx.scanCode({
           success: ({errMsg, result}) => {
-            console.log(result)
+            if (errMsg === 'scanCode:ok' && result) {
+              this.codeVal = result
+              // 扫码成功，跳转到详情页
+              wx.navigateTo({
+                url: `detail?code=${this.codeVal}`
+              })
+            } else {
+              console.log('扫码失败，请换一张重试')
+            }
           }
+        })
+      },
+      // 输入框搜索查找
+      handleInput(event) {
+        let val = String.prototype.trim.call(event.detail.value)
+        if (!val) {
+          wx.showToast({
+            title: '请输入正确的条形码值',
+            icon: 'none',
+            mask: true
+          })
+          return false
+        }
+        this.codeVal = val || ''
+        // 跳转到详情页
+        wx.navigateTo({
+          url: `detail?code=${this.codeVal}`
         })
       }
     }

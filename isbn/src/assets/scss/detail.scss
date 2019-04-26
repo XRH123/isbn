@@ -1,0 +1,53 @@
+@import '_varible.scss';
+.book-info {
+	.book-info_img {
+		display: flex;
+		height: 440rpx;
+		background-color: #efede3;
+		justify-content: center;
+		align-items: center;
+		image {
+			width: 260rpx;
+			height: 340rpx;
+			box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, .1);
+		}
+	}
+	.book-info_text {
+		padding-top: 50rpx;
+		background-color: #fefffa;
+		.container {
+			.title {
+				font-size: 33rpx;
+				font-weight: bold;
+			}
+			.author, .publishing, .isbn, .price {
+				font-size: 24rpx;
+				color: #878787;
+				margin-bottom: 14rpx;
+			}
+		}
+	}
+	.share {
+		position: fixed;
+		left: 40rpx;
+		bottom: 40rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 246rpx;
+		height: 80rpx;
+		background-color: #1b1c23;
+		font-size: 24rpx;
+		color: #fff;
+		padding: 0;
+		border-radius: 40rpx;
+		text {
+			display: inline-block;
+			width: 30rpx;
+			height: 30rpx;
+			background: url(#{$shareIcon}) center center no-repeat;
+			background-size: 100% 100%;
+			margin-right: 20rpx;
+		}
+	}
+}

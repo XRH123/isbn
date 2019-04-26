@@ -1,0 +1,46 @@
+<template>
+	<view class="history">
+		<view class="container">
+			<view class="history-list">
+				<repeat for="{{booksList}}" key="index" index="index" item="book">
+					<navigate
+						url="{{detail?code=}}"
+					>
+						<view class="history-item">
+							<image
+							class="cover"
+							src="{{thumbUrl}}"
+							mode="aspectFit"
+							/>
+						</view>
+					</navigate>
+				</repeat>
+			</view>
+		</view>
+	</view>
+</template>
+<script>
+import wepy from 'wepy'
+import API from '@/api/api.js'
+import storage from '@/mixins/storage.js'
+export default class History extends wepy.page {
+  config = {
+    navigationBarTitleText: '历史记录'
+  }
+  mixins = [storage]
+  data = {
+    bookList: []
+  }
+  onLoad() {
+    this.bookList = this.getStorage('books')
+    console.log(this.bookList)
+  }
+  coverUrlFormate(url) {
+    return `${API.detail.thumb}${url}`
+  }
+}
+</script>
+<style lang="scss" scoped>
+@import '../assets/scss/public.scss';
+
+</style>

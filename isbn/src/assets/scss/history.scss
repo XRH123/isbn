@@ -1,0 +1,40 @@
+.history {
+	&-list {
+
+	}
+	&-item {
+		position: relative;
+		display: flex;
+		padding: 38rpx 0;
+		&::after {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 0;
+			left: 40rpx;
+			width: calc(100vw - 40rpx);
+			height: 2rpx;
+			background-color: #f7f7f7;
+		}
+		&:last-child {
+			&::after {
+				display: none;
+			}
+		}
+		image {
+			width: 120rpx;
+			height: 160rpx;
+			box-shadow: 0 0 12px rgba(0, 0, 0, .4);
+		}
+		.info {
+			flex: 1;
+			margin-left: 40rpx;
+			.title {
+				font-size: 34rpx;
+				font-weight: bold;
+				line-height: 47rpx;
+				margin-bottom: 20rpx;
+			}
+		}
+	}
+}

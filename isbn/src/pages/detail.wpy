@@ -1,0 +1,98 @@
+<template>
+  <view class="book-info">
+    <view class="book-info_img">
+      <image src="{{thumbUrl}}" mode="aspectFit" />
+    </view>
+    <view class="book-info_text">
+      <view class="container">
+        <view class="title">
+          <text>{{book.BookName}}</text>
+        </view>
+        <view class="author">
+          <text>{{book.Author || '未知'}}</text>
+        </view>
+        <view class="publishing">
+          <text>{{book.Publishing}}</text>
+        </view>
+        <view class="isbn">
+          <text>{{book.ISBN}}</text>
+        </view>
+        <view class="price">
+          <text>{{book.Price || '未知'}}</text>
+        </view>
+      </view>
+    </view>
+    <button class="share" open-type="share">
+      <text></text>
+      分享给好友
+    </button>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+// 导入api
+import API from '@/api/api.js'
+import storage from '@/mixins/storage.js'
+
+export default class Detail extends wepy.page {
+  config = {
+    navigationBarTitleText: '搜索结果'
+  }
+  mixins = [storage]
+  data = {
+    codeVal: '',
+    book: ''
+  }
+  computed = {
+    thumbUrl: function () {
+      return API.detail.thumb + this.book.PhotoUrl
+    }
+  }
+  onLoad(option) {
+    this.codeVal = option.code || ''
+  }
+  onShow() {
+    this._getBookInfo(this.codeVal)
+  }
+  // 获取书籍信息
+  _getBookInfo(code) {
+    wx.showNavigationBarLoading()
+    wx.request({
+      url: `${API.detail.bookInfo}${code}`,
+      data: {},
+      header: {
+        'content-type': 'application/json'
+      },
+      success: ({statusCode, data, errMsg}) => {
+        if (!data.ErrorCode) {
+          this.book = data
+          this.setStorage('books', data, 'ISBN')
+          this.$apply()
+        } else {
+          wx.showToast({
+            title: data.ErrorMessage,
+            icon: 'none',
+            mask: true
+          })
+        }
+      },
+      complete: () => {
+        wx.hideNavigationBarLoading()
+      }
+    })
+  }
+  onShareAppMessage() {
+    return {
+      title: '好友邀请你一起阅读',
+      path: `detail?code=${this.codeVal}`
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import '../assets/scss/_varible.scss';
+@import '../assets/scss/detail.scss';
+@import '../assets/scss/public.scss';
+</style>
