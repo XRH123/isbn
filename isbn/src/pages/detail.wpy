@@ -24,7 +24,17 @@
     </view>
     <button class="share" open-type="share">
       <text></text>
-      分享给好友
+      点击分享
+    </button>
+    <navigator>
+      <button class="history">
+        <text></text>
+        浏览历史
+      </button>
+    </navigator>
+    <button class="collection {{collect ? 'collected' : ''}}" @tap="handleCollected">
+      <text></text>
+      点击收藏
     </button>
   </view>
 </template>
@@ -42,18 +52,32 @@ export default class Detail extends wepy.page {
   mixins = [storage]
   data = {
     codeVal: '',
-    book: ''
+    book: '',
+    collect: false,
+    res: ''
   }
   computed = {
     thumbUrl: function () {
       return API.detail.thumb + this.book.PhotoUrl
     }
   }
+  methods = {
+    handleCollected() {
+      if (this.collect) {
+        this.setAttrByPK('books', 'ISBN', this.codeVal, 'collect', false)
+        this.collect = false
+      } else {
+        this.setAttrByPK('books', 'ISBN', this.codeVal, 'collect', true)
+        this.collect = true
+      }
+    }
+  }
   onLoad(option) {
     this.codeVal = option.code || ''
+    this._getBookInfo(this.codeVal)
   }
   onShow() {
-    this._getBookInfo(this.codeVal)
+    this._getBookInfo('books', 'ISBN', this.codeVal)
   }
   // 获取书籍信息
   _getBookInfo(code) {

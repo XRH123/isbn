@@ -31,7 +31,7 @@ import API from '@/api/api.js'
 import storage from '@/mixins/storage.js'
 export default class History extends wepy.page {
   config = {
-    navigationBarTitleText: '历史记录'
+    navigationBarTitleText: '收藏'
   }
   mixins = [storage]
   data = {
@@ -40,8 +40,6 @@ export default class History extends wepy.page {
   }
   onLoad() {
     this.coverPreFix = API.detail.thumb
-  }
-  onShow() {
     this.bookList = this.getStorage('books')
   }
   coverUrlFormate(url) {
