@@ -26,12 +26,10 @@
       <text></text>
       点击分享
     </button>
-    <navigator>
-      <button class="history">
-        <text></text>
-        浏览历史
-      </button>
-    </navigator>
+    <button class="history" @tap="handleToHistory">
+      <text></text>
+      浏览历史
+    </button>
     <button class="collection {{collect ? 'collected' : ''}}" @tap="handleCollected">
       <text></text>
       点击收藏
@@ -54,7 +52,8 @@ export default class Detail extends wepy.page {
     codeVal: '',
     book: '',
     collect: false,
-    res: ''
+    res: '',
+    delete: false
   }
   computed = {
     thumbUrl: function () {
@@ -70,14 +69,12 @@ export default class Detail extends wepy.page {
         this.setAttrByPK('books', 'ISBN', this.codeVal, 'collect', true)
         this.collect = true
       }
+    },
+    handleToHistory() {
+      wx.switchTab({
+        url: 'history'
+      })
     }
-  }
-  onLoad(option) {
-    this.codeVal = option.code || ''
-    this._getBookInfo(this.codeVal)
-  }
-  onShow() {
-    this._getBookInfo('books', 'ISBN', this.codeVal)
   }
   // 获取书籍信息
   _getBookInfo(code) {
@@ -92,6 +89,13 @@ export default class Detail extends wepy.page {
         if (!data.ErrorCode) {
           this.book = data
           this.setStorage('books', data, 'ISBN')
+          if (this.delete) {
+            this.setAttrByPK('books', 'ISBN', this.codeVal, 'delete', false)
+            this.delete = false
+          } else {
+            this.setAttrByPK('books', 'ISBN', this.codeVal, 'delete', true)
+            this.delete = true
+          }
           this.$apply()
         } else {
           wx.showToast({
@@ -99,12 +103,25 @@ export default class Detail extends wepy.page {
             icon: 'none',
             mask: true
           })
+          let timer = setTimeout(function () {
+            clearTimeout(timer)
+            wx.navigateBack({
+              delta: 1
+            })
+          }, 1500)
         }
       },
       complete: () => {
         wx.hideNavigationBarLoading()
       }
     })
+  }
+  onLoad(option) {
+    this.codeVal = option.code || ''
+    this._getBookInfo(this.codeVal)
+  }
+  onShow() {
+
   }
   onShareAppMessage() {
     return {

@@ -1,13 +1,13 @@
 <template>
-	<view class="history">
+	<view class="collection">
 		<view class="container">
-			<view class="history-list">
+			<view class="collection-list" wx:if="{{hasData}}">
 				<repeat for="{{bookList}}" key="index" index="index" item="book">
           <navigator
             url = "{{'detail?code=' + book.ISBN}}"
             hover-class = "none"
           >
-						<view class="history-item">
+						<view class="collection-item">
 							<image
 							class="cover"
 							src="{{coverPreFix + book.PhotoUrl}}"
@@ -17,11 +17,16 @@
                 <view class="title">{{book.BookName}}</view>
                 <view class="author">{{book.Author}}</view>
                 <view class="publishing">{{book.Publishing}}</view>
+                <text class="del-btn" @tap.stop="handleDel('{{book.ISBN}}', '{{index}}')"></text>
               </view>
 						</view>
           </navigator>
 				</repeat>
 			</view>
+      <view class="empty" wx:else>
+        <image src="../assets/images/empty_icon.png" />
+        <view>暂无数据</view>
+      </view>
 		</view>
 	</view>
 </template>
@@ -38,9 +43,35 @@ export default class History extends wepy.page {
     bookList: [],
     coverPreFix: ''
   }
+  computed = {
+    hasData: function() {
+      return this.bookList.length > 0
+    }
+  }
+  methods = {
+    handleDel(isbn, index) {
+      wx.showModal({
+        title: '提示',
+        content: '确定取消收藏？',
+        confirmText: '移除',
+        confirmColor: '#594d9c',
+        success: (res) => {
+          if (res.confirm) {
+            this.setAttrByPK('books', 'ISBN', isbn, 'collect', false)
+            this.bookList.splice(index, 1)
+            this.$apply()
+          }
+        }
+      })
+    }
+  }
   onLoad() {
     this.coverPreFix = API.detail.thumb
-    this.bookList = this.getStorage('books')
+  }
+  onShow() {
+    this.bookList = this.getStorage('books').filter((book) => {
+      return book.collect
+    })
   }
   coverUrlFormate(url) {
     return `${API.detail.thumb}${url}`
@@ -49,5 +80,5 @@ export default class History extends wepy.page {
 </script>
 <style lang="scss" scoped>
 @import '../assets/scss/public.scss';
-@import '../assets/scss/history.scss';
+@import '../assets/scss/collection.scss';
 </style>

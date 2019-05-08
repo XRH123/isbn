@@ -1,7 +1,7 @@
 <template>
 	<view class="history">
 		<view class="container">
-			<view class="history-list">
+			<view class="history-list" wx:if="{{hasData}}">
 				<repeat for="{{bookList}}" key="index" index="index" item="book">
           <navigator
             url = "{{'detail?code=' + book.ISBN}}"
@@ -17,11 +17,16 @@
                 <view class="title">{{book.BookName}}</view>
                 <view class="author">{{book.Author}}</view>
                 <view class="publishing">{{book.Publishing}}</view>
+                <text class="del-btn" @tap.stop="handleDel('{{book.ISBN}}', '{{index}}')"></text>
               </view>
 						</view>
           </navigator>
 				</repeat>
 			</view>
+      <view class="empty" wx:else>
+        <image src="../assets/images/empty_icon.png" />
+        <view>暂无数据</view>
+      </view>
 		</view>
 	</view>
 </template>
@@ -31,25 +36,50 @@ import API from '@/api/api.js'
 import storage from '@/mixins/storage.js'
 export default class History extends wepy.page {
   config = {
-    navigationBarTitleText: '历史记录'
+    navigationBarTitleText: '浏览记录'
   }
   mixins = [storage]
   data = {
     bookList: [],
-    coverPreFix: ''
+    coverPreFix: '',
+    delete: true
+  }
+  computed = {
+    hasData: function() {
+      return this.bookList.length > 0
+    }
+  }
+  methods = {
+    handleDel(isbn, index) {
+      wx.showModal({
+        title: '提示',
+        content: '确定删除该条历史记录？',
+        confirmText: '移除',
+        confirmColor: '#594d9c',
+        success: (res) => {
+          if (res.confirm) {
+            this.setAttrByPK('books', 'ISBN', isbn, 'delete', false)
+            this.bookList.splice(index, 1)
+            this.$apply()
+          }
+        }
+      })
+    }
   }
   onLoad() {
     this.coverPreFix = API.detail.thumb
   }
   onShow() {
-    this.bookList = this.getStorage('books')
+    this.bookList = this.getStorage('books').filter((book) => {
+      return book.delete
+    })
   }
   coverUrlFormate(url) {
     return `${API.detail.thumb}${url}`
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../assets/scss/public.scss';
 @import '../assets/scss/history.scss';
 </style>
